@@ -1,6 +1,6 @@
 # 📚 Sistema de Gestión de Biblioteca (CRA)
 
-Este proyecto es una aplicación de escritorio desarrollada en **Python** diseñada para facilitar la gestión de recursos literarios en un Centro de Recursos para el Aprendizaje (CRA).
+Este proyecto es una aplicación de escritorio desarrollada en **Python** diseñada para facilitar la gestión de recursos literarios de la Biblioteca (CRA) de una escuela.
 
 ## 🚀 Características Principales
 
