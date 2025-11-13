@@ -9,7 +9,7 @@ customtkinter.set_default_color_theme("blue")
 
 DATABASE_NAME = "inventario.db"
 
-# --- Funciones de Base de Datos (IGUAL) ---
+# --- Funciones de Base de Datos ---
 def conectar_db():
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -53,7 +53,7 @@ def inicializar_db():
     conn.commit()
     conn.close()
 
-# --- VENTANAS EMERGENTES (IGUAL QUE VERSIÓN ANTERIOR) ---
+# --- VENTANAS EMERGENTES ---
 
 class VentanaNuevoLibro(customtkinter.CTkToplevel):
     def __init__(self, master, *args, **kwargs):
@@ -213,63 +213,41 @@ class App(customtkinter.CTk):
         self.tab_view = customtkinter.CTkTabview(self, width=980)
         self.tab_view.pack(pady=10, padx=10, fill="both", expand=True) 
 
-        # ===================================================
-        # PESTAÑA 1: PRÉSTAMOS Y DEVOLUCIONES (REDDISEÑADA)
-        # ===================================================
+        # PESTAÑA 1: PRÉSTAMOS
         self.tab_view.add("Préstamos")
         tab_p = self.tab_view.tab("Préstamos")
-        
-        # 3 Columnas: Izquierda (Préstamo), Centro (Separador), Derecha (Devolución)
         tab_p.grid_columnconfigure(0, weight=10)
-        tab_p.grid_columnconfigure(1, weight=1) # Columna estrecha para separador
+        tab_p.grid_columnconfigure(1, weight=1)
         tab_p.grid_columnconfigure(2, weight=10)
         tab_p.grid_rowconfigure(0, weight=1)
 
-        # --- FRAME IZQUIERDO: PRÉSTAMO (AZUL) ---
-        # border_color define el color del borde, border_width el grosor
+        # Frame Préstamo (Azul)
         fp = customtkinter.CTkFrame(tab_p, corner_radius=15, border_width=2, border_color="#3B8ED0") 
         fp.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
         fp.grid_columnconfigure(1, weight=1)
-
         customtkinter.CTkLabel(fp, text="📤 REALIZAR PRÉSTAMO", font=("Arial", 18, "bold"), text_color="#3B8ED0").grid(row=0, columnspan=2, pady=(20, 10))
-        customtkinter.CTkLabel(fp, text="Salida de libros para alumnos", font=("Arial", 12), text_color="gray").grid(row=1, columnspan=2, pady=(0, 20))
-        
         customtkinter.CTkLabel(fp, text="RUT Alumno:").grid(row=2, column=0, sticky="w", padx=20)
         self.entry_p_rut = customtkinter.CTkEntry(fp, placeholder_text="Ej: 12345678-9")
         self.entry_p_rut.grid(row=2, column=1, sticky="ew", padx=20, pady=10)
-        
         customtkinter.CTkLabel(fp, text="ISBN/Título:").grid(row=3, column=0, sticky="w", padx=20)
-        self.entry_p_isbn = customtkinter.CTkEntry(fp, placeholder_text="Ej: 999-999-999-9")
+        self.entry_p_isbn = customtkinter.CTkEntry(fp, placeholder_text="Escanee o escriba...")
         self.entry_p_isbn.grid(row=3, column=1, sticky="ew", padx=20, pady=10)
-        
-        customtkinter.CTkButton(fp, text="CONFIRMAR PRÉSTAMO", fg_color="#3B8ED0", hover_color="#36719F", height=40, 
-                                command=self.realizar_prestamo).grid(row=4, columnspan=2, pady=30, padx=20, sticky="ew")
+        customtkinter.CTkButton(fp, text="CONFIRMAR PRÉSTAMO", fg_color="#3B8ED0", height=40, command=self.realizar_prestamo).grid(row=4, columnspan=2, pady=30, padx=20, sticky="ew")
 
-        # --- SEPARADOR VERTICAL ---
-        sep = customtkinter.CTkFrame(tab_p, width=2, fg_color="gray40")
-        sep.grid(row=0, column=1, sticky="ns", pady=40)
+        # Separador
+        customtkinter.CTkFrame(tab_p, width=2, fg_color="gray40").grid(row=0, column=1, sticky="ns", pady=40)
 
-        # --- FRAME DERECHO: DEVOLUCIÓN (VERDE) ---
+        # Frame Devolución (Verde)
         fd = customtkinter.CTkFrame(tab_p, corner_radius=15, border_width=2, border_color="#2CC985")
         fd.grid(row=0, column=2, padx=20, pady=20, sticky="nsew")
         fd.grid_columnconfigure(1, weight=1)
-
         customtkinter.CTkLabel(fd, text="📥 REGISTRAR DEVOLUCIÓN", font=("Arial", 18, "bold"), text_color="#2CC985").grid(row=0, columnspan=2, pady=(20, 10))
-        customtkinter.CTkLabel(fd, text="Reingreso de libros al inventario", font=("Arial", 12), text_color="gray").grid(row=1, columnspan=2, pady=(0, 20))
-
         customtkinter.CTkLabel(fd, text="ISBN/Título:").grid(row=2, column=0, sticky="w", padx=20)
         self.entry_d_isbn = customtkinter.CTkEntry(fd, placeholder_text="Libro a devolver...")
         self.entry_d_isbn.grid(row=2, column=1, sticky="ew", padx=20, pady=10)
-        
-        # Espacio vacío para equilibrar visualmente con el lado izquierdo
-        customtkinter.CTkLabel(fd, text="").grid(row=3, pady=15)
+        customtkinter.CTkButton(fd, text="CONFIRMAR DEVOLUCIÓN", fg_color="#2CC985", height=40, command=self.realizar_devolucion).grid(row=4, columnspan=2, pady=30, padx=20, sticky="ew")
 
-        customtkinter.CTkButton(fd, text="CONFIRMAR DEVOLUCIÓN", fg_color="#2CC985", hover_color="#25A86E", height=40, 
-                                command=self.realizar_devolucion).grid(row=4, columnspan=2, pady=30, padx=20, sticky="ew")
-
-        # ===================================================
-        # PESTAÑA 2: LIBROS (IGUAL)
-        # ===================================================
+        # PESTAÑA 2: LIBROS
         self.tab_view.add("Libros")
         tab_l = self.tab_view.tab("Libros")
         fl = customtkinter.CTkFrame(tab_l)
@@ -290,9 +268,7 @@ class App(customtkinter.CTk):
         self.scroll_libros = customtkinter.CTkScrollableFrame(tab_l)
         self.scroll_libros.pack(fill="both", expand=True, padx=10, pady=5)
 
-        # ===================================================
-        # PESTAÑA 3: ALUMNOS (IGUAL)
-        # ===================================================
+        # PESTAÑA 3: ALUMNOS
         self.tab_view.add("Alumnos")
         tab_a = self.tab_view.tab("Alumnos")
         fa = customtkinter.CTkFrame(tab_a)
@@ -313,7 +289,6 @@ class App(customtkinter.CTk):
         self.scroll_alumnos = customtkinter.CTkScrollableFrame(tab_a)
         self.scroll_alumnos.pack(fill="both", expand=True, padx=10, pady=5)
 
-        # Referencias
         self.win_n_libro = None; self.win_e_libro = None; self.win_n_alumno = None; self.win_e_alumno = None; self.win_detalle = None
 
     # --- VENTANAS ---
@@ -390,40 +365,82 @@ class App(customtkinter.CTk):
             if messagebox.askyesno("Borrar", f"¿Eliminar a {nombre}?"): c.execute("DELETE FROM Prestatarios WHERE ID_Prestatario=?", (pid,)); conn.commit(); self.buscar_alumnos()
         finally: conn.close()
 
-    # --- LOGICA PRESTAMOS ---
+    # --- LOGICA PRESTAMOS (EXPANDIDA PARA CORREGIR ERROR) ---
     def realizar_prestamo(self):
-        rut, item = self.entry_p_rut.get(), self.entry_p_isbn.get()
-        if not rut or not item: return
-        conn = conectar_db(); c = conn.cursor()
+        rut = self.entry_p_rut.get()
+        item = self.entry_p_isbn.get()
+        if not rut or not item:
+            messagebox.showerror("Error", "Datos incompletos.")
+            return
+
+        conn = conectar_db()
+        c = conn.cursor()
         try:
-            c.execute("SELECT ID_Prestatario, Nombre FROM Prestatarios WHERE RUT = ?", (rut,)); res_a = c.fetchone()
-            if not res_a: return messagebox.showerror("Error", "Alumno no encontrado.")
+            c.execute("SELECT ID_Prestatario, Nombre FROM Prestatarios WHERE RUT = ?", (rut,))
+            res_a = c.fetchone()
+            if not res_a:
+                messagebox.showerror("Error", "Alumno no encontrado.")
+                return
             pid, pnom = res_a
+            
             lk = f"%{item}%"
-            c.execute("SELECT ID_Libro, Título, Disponibles FROM Libros WHERE (ISBN = ? OR Título LIKE ?) AND Disponibles > 0", (item, lk)); res_l = c.fetchone()
-            if not res_l: return messagebox.showerror("Error", "Libro no disponible."); lid, ltit, ldisp = res_l
+            c.execute("SELECT ID_Libro, Título, Disponibles FROM Libros WHERE (ISBN = ? OR Título LIKE ?) AND Disponibles > 0", (item, lk))
+            res_l = c.fetchone()
+            if not res_l:
+                messagebox.showerror("Error", "Libro no disponible o no encontrado.")
+                return
+            lid, ltit, ldisp = res_l
+            
             c.execute("SELECT 1 FROM Transacciones WHERE ID_Libro = ? AND ID_Prestatario = ? AND Estado = 'Prestado'", (lid, pid))
-            if c.fetchone(): return messagebox.showerror("Error", "Préstamo duplicado.")
+            if c.fetchone():
+                messagebox.showerror("Error", "Préstamo duplicado.")
+                return
+                
             c.execute("UPDATE Libros SET Disponibles = Disponibles - 1 WHERE ID_Libro = ?", (lid,))
-            c.execute("INSERT INTO Transacciones (ID_Libro, ID_Prestatario, Fecha_Entrega, Estado) VALUES (?, ?, ?, 'Prestado')", (lid, pid, datetime.now().strftime("%Y-%m-%d")))
-            conn.commit(); messagebox.showinfo("Éxito", f"Préstamo: {ltit} -> {pnom}"); self.entry_p_rut.delete(0, "end"); self.entry_p_isbn.delete(0, "end")
-        except Exception as e: conn.rollback(); messagebox.showerror("Error", str(e))
-        finally: conn.close()
+            c.execute("INSERT INTO Transacciones (ID_Libro, ID_Prestatario, Fecha_Entrega, Estado) VALUES (?, ?, ?, 'Prestado')", 
+                      (lid, pid, datetime.now().strftime("%Y-%m-%d")))
+            conn.commit()
+            messagebox.showinfo("Éxito", f"Préstamo: {ltit} -> {pnom}")
+            self.entry_p_rut.delete(0, "end")
+            self.entry_p_isbn.delete(0, "end")
+        except Exception as e:
+            conn.rollback()
+            messagebox.showerror("Error", str(e))
+        finally:
+            conn.close()
 
     def realizar_devolucion(self):
-        item = self.entry_d_isbn.get(); 
-        if not item: return
-        conn = conectar_db(); c = conn.cursor()
+        item = self.entry_d_isbn.get()
+        if not item:
+            messagebox.showerror("Error", "Ingrese ISBN o Título.")
+            return
+
+        conn = conectar_db()
+        c = conn.cursor()
         try:
-            lk = f"%{item}%"; c.execute("SELECT ID_Libro, Título FROM Libros WHERE ISBN = ? OR Título LIKE ?", (item, lk)); res = c.fetchone()
-            if not res: return; lid, ltit = res
-            c.execute("SELECT ID_Transaccion FROM Transacciones WHERE ID_Libro = ? AND Estado = 'Prestado' LIMIT 1", (lid,)); res_t = c.fetchone()
-            if not res_t: return messagebox.showerror("Error", "No hay préstamo activo.")
+            lk = f"%{item}%"
+            c.execute("SELECT ID_Libro, Título FROM Libros WHERE ISBN = ? OR Título LIKE ?", (item, lk))
+            res = c.fetchone()
+            if not res:
+                messagebox.showerror("Error", "Libro no encontrado.")
+                return
+            lid, ltit = res
+            
+            c.execute("SELECT ID_Transaccion FROM Transacciones WHERE ID_Libro = ? AND Estado = 'Prestado' LIMIT 1", (lid,))
+            res_t = c.fetchone()
+            if not res_t:
+                messagebox.showerror("Error", "No hay préstamo activo para este libro.")
+                return
             tid = res_t[0]
-            c.execute("UPDATE Transacciones SET Estado = 'Devuelto', Fecha_Devolucion_Real = ? WHERE ID_Transaccion = ?", (datetime.now().strftime("%Y-%m-%d"), tid))
+            
+            c.execute("UPDATE Transacciones SET Estado = 'Devuelto', Fecha_Devolucion_Real = ? WHERE ID_Transaccion = ?", 
+                      (datetime.now().strftime("%Y-%m-%d"), tid))
             c.execute("UPDATE Libros SET Disponibles = Disponibles + 1 WHERE ID_Libro = ?", (lid,))
-            conn.commit(); messagebox.showinfo("Éxito", f"Devuelto: {ltit}"); self.entry_d_isbn.delete(0, "end")
-        finally: conn.close()
+            conn.commit()
+            messagebox.showinfo("Éxito", f"Devuelto: {ltit}")
+            self.entry_d_isbn.delete(0, "end")
+        finally:
+            conn.close()
 
 if __name__ == "__main__":
     app = App()

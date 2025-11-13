@@ -21,6 +21,18 @@ Este proyecto es una aplicación de escritorio desarrollada en **Python** diseñ
 Para ejecutar este sistema, necesitas tener instalado:
 * Python 3.x
 
+## 📸 Galería
+
+### 🤝 Control de Préstamos
+![Vista del sistema de préstamos](img/Prestamos.png)
+
+
+### 📚 Catálogo de Libros
+![Vista del inventario de libros](img/Libros.png)
+
+### 👥 Gestión de Alumnos
+![Vista del módulo/ventana de alumnos](img/Alumnos.png)
+
 ## 🔧 Instalación y Uso
 
 1.  Clona el repositorio:
