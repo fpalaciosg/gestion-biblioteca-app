@@ -1,6 +1,6 @@
 # 📚 Sistema de Gestión de Biblioteca (CRA)
 
-Este proyecto es una aplicación de escritorio desarrollada en **Python** diseñada para facilitar la gestión de recursos literarios de la Biblioteca (CRA) de una escuela.
+Este es un software de escritorio desarrollado en Python con CustomTkinter y SQLite, diseñado para gestionar el inventario de libros, préstamos y alumnos de la biblioteca CRA de una escuela.
 
 ## 🚀 Características Principales
 
@@ -20,6 +20,48 @@ Este proyecto es una aplicación de escritorio desarrollada en **Python** diseñ
 
 Para ejecutar este sistema, necesitas tener instalado:
 * Python 3.x
+
+## 🚀 Puesta en Marcha (Importación de Alumnos)
+
+Este proyecto incluye un script de ayuda llamado `importar_alumnos.py`. Su única función es leer un archivo de Excel y cargar masivamente a todos los alumnos en la base de datos, para no tener que registrarlos uno por uno.
+
+**Importante:** Este script está diseñado para ejecutarse **una sola vez** al configurar el programa por primera vez.
+
+### Requisitos
+
+1.  Tener Python instalado.
+2.  Tener el archivo de Excel con los datos de los alumnos.
+
+### 📖 Instrucciones Paso a Paso
+
+1.  **Instalar Librerías:**
+    Antes de ejecutar cualquier script, necesitas instalar las dependencias. Abre una terminal en la carpeta del proyecto y ejecuta:
+    ```bash
+    pip install pandas openpyxl customtkinter
+    ```
+
+2.  **Preparar el Archivo de Excel:**
+    * Toma tu lista de alumnos y asegúrate de que el archivo tenga **exactamente** estas tres columnas: `RUT`, `Nombre`, `Curso`.
+    * El orden de las columnas no importa, pero los nombres de las cabeceras deben ser exactos.
+    * Guarda este archivo en la **misma carpeta** del proyecto con el nombre: `alumnos.xlsx`.
+
+3.  **Ejecutar el Script de Importación:**
+    En la misma terminal, ejecuta **solo** el script de importación (NO el programa principal):
+    ```bash
+    python importar_alumnos.py
+    ```
+    * La terminal te mostrará un resumen de cuántos alumnos se importaron y cuántos se omitieron (porque el RUT ya existía).
+
+4.  **¡Listo!**
+    * El script habrá poblado el archivo `inventario.db` (que se crea automáticamente si no existe).
+    * Ahora puedes borrar o mover tu archivo `alumnos.xlsx` por seguridad.
+
+5.  **Ejecutar el Programa Principal:**
+    Ahora sí, ejecuta el sistema de inventario:
+    ```bash
+    python sistema_biblioteca.py
+    ```
+    * Ve a la pestaña "Alumnos" y presiona "Buscar" (con el campo vacío) para ver los alumnos con préstamos, o busca por nombre para ver a todos los que importaste.
 
 ## 📸 Galería
 

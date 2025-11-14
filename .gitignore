@@ -14,6 +14,6 @@
 # Ignorar la carpeta de caché de Python
 __pycache__/
 
-# --- Archivos de Entorno Virtual (Si usas uno) ---
+# --- Archivos de Entorno Virtual ---
 venv/
 .venv/
