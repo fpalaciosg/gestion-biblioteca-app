@@ -1,0 +1,19 @@
+# --- Datos Sensibles y Archivos de Base de Datos ---
+# Ignorar TODOS los archivos de base de datos de SQLite
+*.db
+*.db3
+*.sqlite
+*.sqlite3
+
+# Ignorar TODOS los archivos de Excel
+*.xlsx
+*.xls
+*.csv
+
+# --- Archivos temporales de Python ---
+# Ignorar la carpeta de caché de Python
+__pycache__/
+
+# --- Archivos de Entorno Virtual (Si usas uno) ---
+venv/
+.venv/
