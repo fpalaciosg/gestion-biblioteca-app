@@ -136,11 +136,11 @@ class VentanaNuevoPrestatario(customtkinter.CTkToplevel):
         self.frame.pack(pady=20, padx=20, fill="both", expand=True)
         self.frame.grid_columnconfigure(1, weight=1) 
         self.lbl_rut = customtkinter.CTkLabel(self.frame, text="RUT:").grid(row=0, column=0, sticky="w", padx=10, pady=5)
-        self.entry_rut = customtkinter.CTkEntry(self.frame); self.entry_rut.grid(row=0, column=1, sticky="ew", padx=10, pady=5)
+        self.entry_rut = customtkinter.CTkEntry(self.frame, placeholder_text="12.345.678-9"); self.entry_rut.grid(row=0, column=1, sticky="ew", padx=10, pady=5)
         self.lbl_nom = customtkinter.CTkLabel(self.frame, text="Nombre:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
-        self.entry_nom = customtkinter.CTkEntry(self.frame); self.entry_nom.grid(row=1, column=1, sticky="ew", padx=10, pady=5)
+        self.entry_nom = customtkinter.CTkEntry(self.frame, placeholder_text="Francisco Palacios González"); self.entry_nom.grid(row=1, column=1, sticky="ew", padx=10, pady=5)
         self.lbl_curso = customtkinter.CTkLabel(self.frame, text="Curso:").grid(row=2, column=0, sticky="w", padx=10, pady=5)
-        self.entry_curso = customtkinter.CTkEntry(self.frame); self.entry_curso.grid(row=2, column=1, sticky="ew", padx=10, pady=5)
+        self.entry_curso = customtkinter.CTkEntry(self.frame, placeholder_text="2°B"); self.entry_curso.grid(row=2, column=1, sticky="ew", padx=10, pady=5)
         customtkinter.CTkButton(self.frame, text="Guardar", command=self.guardar).grid(row=3, column=0, columnspan=2, pady=20)
 
     def guardar(self):
@@ -242,7 +242,7 @@ class App(customtkinter.CTk):
         tab_l = self.tab_view.tab("Libros")
         fl = customtkinter.CTkFrame(tab_l); fl.pack(fill="x", padx=10, pady=10)
         customtkinter.CTkLabel(fl, text="Buscar:").pack(side="left", padx=5)
-        self.entry_bus_l = customtkinter.CTkEntry(fl); self.entry_bus_l.pack(side="left", fill="x", expand=True, padx=5)
+        self.entry_bus_l = customtkinter.CTkEntry(fl, placeholder_text="Nombre del libro"); self.entry_bus_l.pack(side="left", fill="x", expand=True, padx=5)
         customtkinter.CTkButton(fl, text="Buscar", width=80, command=self.buscar_libros).pack(side="left", padx=5)
         customtkinter.CTkButton(fl, text="Nuevo / Stock", fg_color="green", command=self.abrir_nuevo_libro).pack(side="right", padx=5)
         
@@ -268,7 +268,7 @@ class App(customtkinter.CTk):
         self.tab_view.add("Alumnos")
         tab_a = self.tab_view.tab("Alumnos"); fa = customtkinter.CTkFrame(tab_a); fa.pack(fill="x", padx=10, pady=10)
         customtkinter.CTkLabel(fa, text="Buscar:").pack(side="left", padx=5)
-        self.entry_bus_a = customtkinter.CTkEntry(fa); self.entry_bus_a.pack(side="left", fill="x", expand=True, padx=5)
+        self.entry_bus_a = customtkinter.CTkEntry(fa, placeholder_text="Buscar por nombre, apellidos o RUT"); self.entry_bus_a.pack(side="left", fill="x", expand=True, padx=5)
         customtkinter.CTkButton(fa, text="Buscar", width=80, command=self.buscar_alumnos).pack(side="left", padx=5)
         customtkinter.CTkButton(fa, text="Nuevo Alumno", fg_color="green", command=self.abrir_nuevo_alumno).pack(side="right", padx=5)
         
@@ -367,7 +367,18 @@ class App(customtkinter.CTk):
                (SELECT COUNT(*) FROM Transacciones t WHERE t.ID_Prestatario=p.ID_Prestatario AND t.Estado='Prestado') as Activos
                FROM Prestatarios p"""
         p = ()
-        if term: q += " WHERE p.RUT LIKE ? OR p.Nombre LIKE ? OR p.Curso LIKE ?"; lk = f"%{term}%"; p = (lk, lk, lk)
+        if term: 
+            term_limpio = term.replace(".", "").replace("-", "")
+            lk_limpio = f"%{term_limpio}%"
+            lk_normal = f"%{term}%"
+            q += """
+                WHERE
+                    (REPLACE(REPLACE(p.RUT, '.', ''), '-', '') LIKE ?) OR
+                    (p.Nombre LIKE ?) OR
+                    (p.Curso LIKE ?)
+
+            """
+            p = (lk_limpio, lk_normal, lk_normal)
         else: q += " WHERE (SELECT COUNT(*) FROM Transacciones t WHERE t.ID_Prestatario=p.ID_Prestatario AND t.Estado='Prestado') > 0"
         q += " ORDER BY p.Nombre"; c.execute(q, p); rows = c.fetchall(); conn.close()
 
@@ -422,13 +433,14 @@ class App(customtkinter.CTk):
         if not rut or not item: return messagebox.showerror("Error", "Datos incompletos.")
         conn = conectar_db(); c = conn.cursor()
         try:
-            c.execute("SELECT ID_Prestatario, Nombre FROM Prestatarios WHERE RUT = ?", (rut,)); res_a = c.fetchone()
+            rut_limpio = rut.replace(".", "").replace("-", "")
+            c.execute("SELECT ID_Prestatario, Nombre FROM Prestatarios WHERE REPLACE(REPLACE(RUT, '.', ''), '-', '') = ?", (rut_limpio,)); res_a = c.fetchone()
             if not res_a: return messagebox.showerror("Error", "Alumno no encontrado.")
             pid, pnom = res_a
             lk = f"%{item}%"
             c.execute("SELECT ID_Libro, Título, Disponibles FROM Libros WHERE (ISBN = ? OR Título LIKE ?) AND Disponibles > 0", (item, lk)); res_l = c.fetchone()
             if not res_l: return messagebox.showerror("Error", "Libro no disponible.")
-            lid, ltit, ldisp = res_l
+            lid, ltit, _ = res_l
             c.execute("SELECT 1 FROM Transacciones WHERE ID_Libro = ? AND ID_Prestatario = ? AND Estado = 'Prestado'", (lid, pid))
             if c.fetchone(): return messagebox.showerror("Error", "Préstamo duplicado.")
             c.execute("UPDATE Libros SET Disponibles = Disponibles - 1 WHERE ID_Libro = ?", (lid,))
