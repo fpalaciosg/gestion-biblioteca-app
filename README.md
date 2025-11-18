@@ -55,14 +55,14 @@ Este proyecto incluye un script de ayuda llamado `importar_alumnos.py`. Su únic
     * Guarda este archivo en la **misma carpeta** del proyecto con el nombre: `alumnos.xlsx`.
 
 3.  **Ejecutar el Script de Importación:**
-    En la misma terminal, ejecuta **solo** el script de importación (NO el programa principal):
+    Asegúrate de que el archivo `alumnos.xlsx` esté en la carpeta y luego ejecuta:
     ```bash
     python importar_alumnos.py
     ```
-    * La terminal te mostrará un resumen de cuántos alumnos se importaron y cuántos se omitieron (porque el RUT ya existía).
+    * El script leerá automáticamente el archivo llamado `alumnos.xlsx`.
 
 4.  **¡Listo!**
-    * El script habrá poblado el archivo `inventario.db` (que se crea automáticamente si no existe).
+    * El script habrá poblado el archivo `inventario.db`.
     * Ahora puedes borrar o mover tu archivo `alumnos.xlsx` por seguridad.
 
 5.  **Ejecutar el Programa Principal:**
