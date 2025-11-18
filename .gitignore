@@ -1,19 +1,16 @@
-# --- Datos Sensibles y Archivos de Base de Datos ---
-# Ignorar TODOS los archivos de base de datos de SQLite
+# --- Datos Sensibles y Bases de Datos (NO SUBIR) ---
+alumnos.xlsx
+inventario.db
+*.xlsx
+*.csv
 *.db
 *.db3
 *.sqlite
 *.sqlite3
 
-# Ignorar TODOS los archivos de Excel
-*.xlsx
-*.xls
-*.csv
-
-# --- Archivos temporales de Python ---
-# Ignorar la carpeta de caché de Python
+# --- Archivos Generados por PyInstaller y Python ---
+build/
+dist/
+*.spec
 __pycache__/
-
-# --- Archivos de Entorno Virtual ---
 venv/
-.venv/

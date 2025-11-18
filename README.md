@@ -2,6 +2,15 @@
 
 Este es un software de escritorio desarrollado en Python con CustomTkinter y SQLite, diseñado para gestionar el inventario de libros, préstamos y alumnos de la biblioteca CRA de una escuela.
 
+## 🌟 Mejoras de Calidad y Robustez
+
+Esta versión incluye mejoras clave de rendimiento y experiencia de usuario:
+
+* **Optimización de Rendimiento:** La búsqueda ahora utiliza una **Vista Inteligente**. Al presionar "Buscar" con el campo vacío, solo se muestran los ítems con préstamos activos, lo cual asegura que el programa sea instantáneo incluso con miles de registros.
+* **CRUD Completo:** Implementación de la edición de datos para Libros y Alumnos.
+* **Búsqueda Flexible:** Los campos de RUT en Préstamos y Búsqueda ahora ignoran puntos y guiones, lo que facilita la vida del usuario.
+* **UX:** Implementación de placeholders (texto de ejemplo) y diseño moderno en la pestaña de Préstamos.
+
 ## 🚀 Características Principales
 
 * **Gestión de Inventario:** Permite agregar, editar y eliminar libros de la base de datos.

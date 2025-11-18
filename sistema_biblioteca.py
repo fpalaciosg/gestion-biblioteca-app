@@ -2,12 +2,20 @@ import sqlite3
 import customtkinter
 from tkinter import messagebox
 from datetime import datetime
+import sys
+import os
 
 # --- Configuración de Apariencia ---
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
-DATABASE_NAME = "inventario.db"
+# --- LÓGICA DE PERSISTENCIA ---
+if getattr(sys, 'frozen', False):
+    application_path = os.path.dirname(sys.executable)
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))
+
+DATABASE_NAME = os.path.join(application_path, "inventario.db")
 
 # --- Funciones de Base de Datos (IGUAL) ---
 def conectar_db():
