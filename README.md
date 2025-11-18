@@ -88,7 +88,7 @@ Este proyecto incluye un script de ayuda llamado `importar_alumnos.py`. Su únic
 
 1.  Clona el repositorio:
     ```bash
-    git clone [https://github.com/fpalaciosg/gestion-biblioteca-app.git](https://github.com/fpalaciosg/gestion-biblioteca-app.git)
+    git clone https://github.com/fpalaciosg/gestion-biblioteca-app.git
     ```
 2.  Navega a la carpeta del proyecto:
     ```bash
