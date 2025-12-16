@@ -6,6 +6,7 @@ from tkinter import messagebox
 from models.libro import LibroModel
 from models.alumno import AlumnoModel
 from models.transaccion import TransaccionModel
+from utils.theme import Colors, Styles
 
 
 class PrestamosTab:
@@ -17,6 +18,7 @@ class PrestamosTab:
         self.libro_model = libro_model
         self.alumno_model = alumno_model
         self.transaccion_model = transaccion_model
+        self.parent.configure(fg_color=Colors.BG_DARK)
         
         self._build_ui()
     
@@ -28,41 +30,66 @@ class PrestamosTab:
         self.parent.grid_rowconfigure(0, weight=1)
         
         # --- FRAME PRÉSTAMO ---
-        fp = customtkinter.CTkFrame(self.parent, corner_radius=15, border_width=2, border_color="#3B8ED0")
-        fp.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        fp = customtkinter.CTkFrame(self.parent, corner_radius=Styles.CORNER_RADIUS_LARGE, 
+                                   border_width=2, border_color=Colors.SECONDARY,
+                                   fg_color=Colors.BG_SECONDARY)
+        fp.grid(row=0, column=0, padx=Styles.PADDING_LG, pady=Styles.PADDING_LG, sticky="nsew")
         fp.grid_columnconfigure(1, weight=1)
         
-        customtkinter.CTkLabel(fp, text="📤 REALIZAR PRÉSTAMO", font=("Arial", 18, "bold"), 
-                              text_color="#3B8ED0").grid(row=0, columnspan=2, pady=(20, 10))
+        customtkinter.CTkLabel(fp, text="📤 REALIZAR PRÉSTAMO", font=("Segoe UI", 18, "bold"), 
+                              text_color=Colors.SECONDARY).grid(row=0, columnspan=2, pady=(Styles.PADDING_XL, Styles.PADDING_LG))
         
-        customtkinter.CTkLabel(fp, text="RUT Alumno:").grid(row=2, column=0, sticky="w", padx=20)
-        self.entry_p_rut = customtkinter.CTkEntry(fp, placeholder_text="Ej: 12345678-9")
-        self.entry_p_rut.grid(row=2, column=1, sticky="ew", padx=20, pady=10)
+        customtkinter.CTkLabel(fp, text="RUT Alumno:", text_color=Colors.TEXT_PRIMARY,
+                              font=Styles.FONT_REGULAR).grid(row=2, column=0, sticky="w", padx=Styles.PADDING_LG)
+        self.entry_p_rut = customtkinter.CTkEntry(fp, placeholder_text="Ej: 12345678-9",
+                                                  fg_color=Colors.BG_TERTIARY,
+                                                  border_color=Colors.BORDER_ACCENT,
+                                                  text_color=Colors.TEXT_PRIMARY,
+                                                  placeholder_text_color=Colors.TEXT_TERTIARY)
+        self.entry_p_rut.grid(row=2, column=1, sticky="ew", padx=Styles.PADDING_LG, pady=Styles.PADDING_SM)
         
-        customtkinter.CTkLabel(fp, text="ISBN/Título:").grid(row=3, column=0, sticky="w", padx=20)
-        self.entry_p_isbn = customtkinter.CTkEntry(fp, placeholder_text="Escanee o escriba...")
-        self.entry_p_isbn.grid(row=3, column=1, sticky="ew", padx=20, pady=10)
+        customtkinter.CTkLabel(fp, text="ISBN/Título:", text_color=Colors.TEXT_PRIMARY,
+                              font=Styles.FONT_REGULAR).grid(row=3, column=0, sticky="w", padx=Styles.PADDING_LG)
+        self.entry_p_isbn = customtkinter.CTkEntry(fp, placeholder_text="Escanee o escriba...",
+                                                   fg_color=Colors.BG_TERTIARY,
+                                                   border_color=Colors.BORDER_ACCENT,
+                                                   text_color=Colors.TEXT_PRIMARY,
+                                                   placeholder_text_color=Colors.TEXT_TERTIARY)
+        self.entry_p_isbn.grid(row=3, column=1, sticky="ew", padx=Styles.PADDING_LG, pady=Styles.PADDING_SM)
         
-        customtkinter.CTkButton(fp, text="CONFIRMAR PRÉSTAMO", fg_color="#3B8ED0", height=40,
-                               command=self.realizar_prestamo).grid(row=4, columnspan=2, pady=30, padx=20, sticky="ew")
+        customtkinter.CTkButton(fp, text="✓ CONFIRMAR PRÉSTAMO", fg_color=Colors.SECONDARY,
+                               hover_color=Colors.SECONDARY_LIGHT, text_color=Colors.TEXT_INVERSE,
+                               height=Styles.BUTTON_HEIGHT_LG, corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               command=self.realizar_prestamo).grid(row=4, columnspan=2, pady=Styles.PADDING_XL, 
+                                                                    padx=Styles.PADDING_LG, sticky="ew")
         
         # --- SEPARADOR ---
-        customtkinter.CTkFrame(self.parent, width=2, fg_color="gray40").grid(row=0, column=1, sticky="ns", pady=40)
+        customtkinter.CTkFrame(self.parent, width=2, fg_color=Colors.BORDER_LIGHT).grid(row=0, column=1, sticky="ns", pady=40)
         
         # --- FRAME DEVOLUCIÓN ---
-        fd = customtkinter.CTkFrame(self.parent, corner_radius=15, border_width=2, border_color="#2CC985")
-        fd.grid(row=0, column=2, padx=20, pady=20, sticky="nsew")
+        fd = customtkinter.CTkFrame(self.parent, corner_radius=Styles.CORNER_RADIUS_LARGE, 
+                                   border_width=2, border_color=Colors.PRIMARY,
+                                   fg_color=Colors.BG_SECONDARY)
+        fd.grid(row=0, column=2, padx=Styles.PADDING_LG, pady=Styles.PADDING_LG, sticky="nsew")
         fd.grid_columnconfigure(1, weight=1)
         
-        customtkinter.CTkLabel(fd, text="📥 REGISTRAR DEVOLUCIÓN", font=("Arial", 18, "bold"),
-                              text_color="#2CC985").grid(row=0, columnspan=2, pady=(20, 10))
+        customtkinter.CTkLabel(fd, text="📥 REGISTRAR DEVOLUCIÓN", font=("Segoe UI", 18, "bold"),
+                              text_color=Colors.PRIMARY).grid(row=0, columnspan=2, pady=(Styles.PADDING_XL, Styles.PADDING_LG))
         
-        customtkinter.CTkLabel(fd, text="ISBN/Título:").grid(row=2, column=0, sticky="w", padx=20)
-        self.entry_d_isbn = customtkinter.CTkEntry(fd, placeholder_text="Libro a devolver...")
-        self.entry_d_isbn.grid(row=2, column=1, sticky="ew", padx=20, pady=10)
+        customtkinter.CTkLabel(fd, text="ISBN/Título:", text_color=Colors.TEXT_PRIMARY,
+                              font=Styles.FONT_REGULAR).grid(row=2, column=0, sticky="w", padx=Styles.PADDING_LG)
+        self.entry_d_isbn = customtkinter.CTkEntry(fd, placeholder_text="Libro a devolver...",
+                                                   fg_color=Colors.BG_TERTIARY,
+                                                   border_color=Colors.BORDER_ACCENT,
+                                                   text_color=Colors.TEXT_PRIMARY,
+                                                   placeholder_text_color=Colors.TEXT_TERTIARY)
+        self.entry_d_isbn.grid(row=2, column=1, sticky="ew", padx=Styles.PADDING_LG, pady=Styles.PADDING_SM)
         
-        customtkinter.CTkButton(fd, text="CONFIRMAR DEVOLUCIÓN", fg_color="#2CC985", height=40,
-                               command=self.realizar_devolucion).grid(row=4, columnspan=2, pady=30, padx=20, sticky="ew")
+        customtkinter.CTkButton(fd, text="✓ CONFIRMAR DEVOLUCIÓN", fg_color=Colors.PRIMARY,
+                               hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,
+                               height=Styles.BUTTON_HEIGHT_LG, corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               command=self.realizar_devolucion).grid(row=4, columnspan=2, pady=Styles.PADDING_XL, 
+                                                                      padx=Styles.PADDING_LG, sticky="ew")
     
     def realizar_prestamo(self):
         """Realiza un préstamo de un libro a un alumno"""
