@@ -4,10 +4,11 @@ Configuración global de la aplicación
 import os
 import sys
 from pathlib import Path
+from .theme import Colors, Styles
 
 # Configuración de apariencia
-APPEARANCE_MODE = "System"
-COLOR_THEME = "blue"
+APPEARANCE_MODE = "dark"  # dark, light, system
+COLOR_THEME = "blue"  # CustomTkinter theme (fallback)
 
 # Rutas
 if getattr(sys, 'frozen', False):

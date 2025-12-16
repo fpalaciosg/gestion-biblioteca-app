@@ -5,6 +5,7 @@ import customtkinter
 from tkinter import messagebox
 from models.libro import LibroModel
 from ui.dialogs.dialogs import LibroDialog
+from utils.theme import Colors, Styles
 
 
 class LibrosTab:
@@ -15,6 +16,7 @@ class LibrosTab:
         self.libro_model = libro_model
         self.win_e_libro = None
         self.win_n_libro = None
+        self.parent.configure(fg_color=Colors.BG_DARK)
         
         self._build_ui()
         self.buscar_libros()  # Cargar inicial
@@ -22,35 +24,58 @@ class LibrosTab:
     def _build_ui(self):
         """Construye la interfaz de la pestaña"""
         # --- BARRA DE BÚSQUEDA ---
-        fl = customtkinter.CTkFrame(self.parent)
-        fl.pack(fill="x", padx=10, pady=10)
+        fl = customtkinter.CTkFrame(self.parent, fg_color=Colors.BG_SECONDARY,
+                                   corner_radius=Styles.CORNER_RADIUS_SMALL)
+        fl.pack(fill="x", padx=Styles.PADDING_LG, pady=Styles.PADDING_LG)
         
-        customtkinter.CTkLabel(fl, text="Buscar:").pack(side="left", padx=5)
-        self.entry_bus_l = customtkinter.CTkEntry(fl, placeholder_text="Nombre del libro")
-        self.entry_bus_l.pack(side="left", fill="x", expand=True, padx=5)
+        customtkinter.CTkLabel(fl, text="🔍 Buscar:", text_color=Colors.TEXT_PRIMARY,
+                              font=Styles.FONT_REGULAR).pack(side="left", padx=Styles.PADDING_MD)
+        self.entry_bus_l = customtkinter.CTkEntry(fl, placeholder_text="Nombre del libro...",
+                                                  fg_color=Colors.BG_TERTIARY,
+                                                  border_color=Colors.BORDER_ACCENT,
+                                                  text_color=Colors.TEXT_PRIMARY,
+                                                  placeholder_text_color=Colors.TEXT_TERTIARY)
+        self.entry_bus_l.pack(side="left", fill="x", expand=True, padx=Styles.PADDING_MD)
         
-        customtkinter.CTkButton(fl, text="Buscar", width=80, command=self.buscar_libros).pack(side="left", padx=5)
-        customtkinter.CTkButton(fl, text="Nuevo / Stock", fg_color="green", 
-                               command=self.abrir_nuevo_libro).pack(side="right", padx=5)
+        customtkinter.CTkButton(fl, text="🔎 Buscar", width=100, fg_color=Colors.PRIMARY,
+                               hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,
+                               corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               command=self.buscar_libros).pack(side="left", padx=Styles.PADDING_SM)
+        customtkinter.CTkButton(fl, text="➕ Nuevo / Stock", fg_color=Colors.SECONDARY,
+                               hover_color=Colors.SECONDARY_LIGHT, text_color=Colors.TEXT_INVERSE,
+                               corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               command=self.abrir_nuevo_libro).pack(side="right", padx=Styles.PADDING_MD)
         
         # --- CABECERA ---
-        hl = customtkinter.CTkFrame(self.parent, height=30, fg_color="gray40")
-        hl.pack(fill="x", padx=10)
+        hl = customtkinter.CTkFrame(self.parent, height=40, fg_color=Colors.PRIMARY,
+                                   corner_radius=Styles.CORNER_RADIUS_SMALL)
+        hl.pack(fill="x", padx=Styles.PADDING_LG, pady=(0, Styles.PADDING_SM))
+        hl.pack_propagate(False)
         hl.grid_columnconfigure(0, weight=2)  # ISBN
         hl.grid_columnconfigure(1, weight=5)  # TÍTULO
         hl.grid_columnconfigure(2, weight=4)  # AUTOR
         hl.grid_columnconfigure(3, weight=1)  # DISP/TOT
         hl.grid_columnconfigure(4, weight=2)  # ACCIONES
         
-        customtkinter.CTkLabel(hl, text="ISBN", anchor="w").grid(row=0, column=0, padx=5, sticky="w")
-        customtkinter.CTkLabel(hl, text="TÍTULO", anchor="w").grid(row=0, column=1, padx=5, sticky="w")
-        customtkinter.CTkLabel(hl, text="AUTOR", anchor="w").grid(row=0, column=2, padx=5, sticky="w")
-        customtkinter.CTkLabel(hl, text="DISP/TOT", anchor="center").grid(row=0, column=3, padx=5, sticky="ew")
-        customtkinter.CTkLabel(hl, text="ACCIONES", anchor="center").grid(row=0, column=4, padx=10, sticky="e")
+        customtkinter.CTkLabel(hl, text="ISBN", anchor="w", text_color=Colors.TEXT_INVERSE,
+                              font=Styles.FONT_BOLD).grid(row=0, column=0, padx=Styles.PADDING_MD, sticky="w")
+        customtkinter.CTkLabel(hl, text="TÍTULO", anchor="w", text_color=Colors.TEXT_INVERSE,
+                              font=Styles.FONT_BOLD).grid(row=0, column=1, padx=Styles.PADDING_MD, sticky="w")
+        customtkinter.CTkLabel(hl, text="AUTOR", anchor="w", text_color=Colors.TEXT_INVERSE,
+                              font=Styles.FONT_BOLD).grid(row=0, column=2, padx=Styles.PADDING_MD, sticky="w")
+        customtkinter.CTkLabel(hl, text="DISP/TOT", anchor="center", text_color=Colors.TEXT_INVERSE,
+                              font=Styles.FONT_BOLD).grid(row=0, column=3, padx=Styles.PADDING_MD, sticky="ew")
+        customtkinter.CTkLabel(hl, text="ACCIONES", anchor="center", text_color=Colors.TEXT_INVERSE,
+                              font=Styles.FONT_BOLD).grid(row=0, column=4, padx=Styles.PADDING_MD, sticky="e")
         
         # --- ÁREA SCROLLABLE ---
-        self.scroll_libros = customtkinter.CTkScrollableFrame(self.parent)
-        self.scroll_libros.pack(fill="both", expand=True, padx=10, pady=5)
+        self.scroll_libros = customtkinter.CTkScrollableFrame(self.parent, fg_color=Colors.BG_DARK)
+        self.scroll_libros.pack(fill="both", expand=True, padx=Styles.PADDING_LG, pady=(0, Styles.PADDING_LG))
+        self.scroll_libros.grid_columnconfigure(0, weight=2)
+        self.scroll_libros.grid_columnconfigure(1, weight=5)
+        self.scroll_libros.grid_columnconfigure(2, weight=4)
+        self.scroll_libros.grid_columnconfigure(3, weight=1)
+        self.scroll_libros.grid_columnconfigure(4, weight=2)
     
     def buscar_libros(self):
         """Busca libros según el término ingresado"""
@@ -61,38 +86,49 @@ class LibrosTab:
         rows = self.libro_model.buscar_libros(term)
         
         if not rows:
-            msg = "No se encontraron coincidencias." if term else "No hay libros con préstamos activos."
-            customtkinter.CTkLabel(self.scroll_libros, text=msg).pack(pady=10)
+            msg = "📭 No se encontraron coincidencias." if term else "📭 No hay libros con préstamos activos."
+            customtkinter.CTkLabel(self.scroll_libros, text=msg, text_color=Colors.TEXT_SECONDARY,
+                                  font=Styles.FONT_REGULAR).pack(pady=Styles.PADDING_XL)
             return
         
-        for r in rows:
+        for idx, r in enumerate(rows):
             lid, isbn, tit, aut, edit, anio, cat, tot, disp = r
-            
-            # Fila
-            row_f = customtkinter.CTkFrame(self.scroll_libros, fg_color="transparent")
-            row_f.pack(fill="x", pady=2)
-            row_f.grid_columnconfigure(0, weight=2)
-            row_f.grid_columnconfigure(1, weight=5)
-            row_f.grid_columnconfigure(2, weight=4)
-            row_f.grid_columnconfigure(3, weight=1)
-            row_f.grid_columnconfigure(4, weight=2)
             
             tit_trunc = (tit[:35] + '...') if len(tit) > 35 else tit
             aut_trunc = (aut[:25] + '...') if len(aut) > 25 else aut
             
-            customtkinter.CTkLabel(row_f, text=str(isbn), anchor="w").grid(row=0, column=0, padx=5, sticky="w")
-            customtkinter.CTkLabel(row_f, text=tit_trunc, anchor="w").grid(row=0, column=1, padx=5, sticky="w")
-            customtkinter.CTkLabel(row_f, text=aut_trunc, anchor="w").grid(row=0, column=2, padx=5, sticky="w")
-            customtkinter.CTkLabel(row_f, text=f"{disp}/{tot}", anchor="center").grid(row=0, column=3, padx=5, sticky="ew")
+            # Colores según disponibilidad
+            color_text = Colors.TEXT_PRIMARY if disp > 0 else Colors.WARNING
             
-            frame_acciones = customtkinter.CTkFrame(row_f, fg_color="transparent")
-            frame_acciones.grid(row=0, column=4, padx=10, sticky="e")
+            customtkinter.CTkLabel(self.scroll_libros, text=str(isbn), anchor="w", 
+                                  text_color=color_text, font=Styles.FONT_REGULAR).grid(
+                row=idx, column=0, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="w"
+            )
+            customtkinter.CTkLabel(self.scroll_libros, text=tit_trunc, anchor="w", 
+                                  text_color=color_text, font=Styles.FONT_REGULAR).grid(
+                row=idx, column=1, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="w"
+            )
+            customtkinter.CTkLabel(self.scroll_libros, text=aut_trunc, anchor="w", 
+                                  text_color=Colors.TEXT_SECONDARY, font=Styles.FONT_REGULAR).grid(
+                row=idx, column=2, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="w"
+            )
+            customtkinter.CTkLabel(self.scroll_libros, text=f"{disp}/{tot}", anchor="center",
+                                  text_color=color_text, font=Styles.FONT_BOLD).grid(
+                row=idx, column=3, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="ew"
+            )
+            
+            frame_acciones = customtkinter.CTkFrame(self.scroll_libros, fg_color="transparent")
+            frame_acciones.grid(row=idx, column=4, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="e")
             
             datos_para_editar = (isbn, tit, aut, edit, anio, cat)
-            customtkinter.CTkButton(frame_acciones, text="Editar", width=60, fg_color="blue",
-                                   command=lambda i=lid, d=datos_para_editar: self.abrir_editar_libro(i, d)).pack(side="left", padx=2)
-            customtkinter.CTkButton(frame_acciones, text="X", width=30, fg_color="red",
-                                   command=lambda i=lid, t=tit: self.eliminar_libro(i, t)).pack(side="left", padx=2)
+            customtkinter.CTkButton(frame_acciones, text="✏️ Editar", width=80, fg_color=Colors.PRIMARY,
+                                   hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,
+                                   corner_radius=Styles.CORNER_RADIUS_SMALL,
+                                   command=lambda i=lid, d=datos_para_editar: self.abrir_editar_libro(i, d)).pack(side="left", padx=Styles.PADDING_SM)
+            customtkinter.CTkButton(frame_acciones, text="🗑️", width=40, fg_color=Colors.DANGER,
+                                   hover_color="#B02020", text_color=Colors.TEXT_INVERSE,
+                                   corner_radius=Styles.CORNER_RADIUS_SMALL,
+                                   command=lambda i=lid, t=tit: self.eliminar_libro(i, t)).pack(side="left", padx=Styles.PADDING_SM)
     
     def abrir_nuevo_libro(self):
         """Abre el diálogo para crear un nuevo libro"""
