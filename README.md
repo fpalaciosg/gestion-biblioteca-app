@@ -84,19 +84,73 @@ Este proyecto incluye un script de ayuda llamado `importar_alumnos.py`. Su únic
 ### 👥 Gestión de Alumnos
 ![Vista del módulo/ventana de alumnos](img/Alumnos.png)
 
+## � Estructura del Proyecto (v2.0 - Refactorizada)
+
+```
+ProyectoCRA/
+├── main.py                    # Punto de entrada principal
+├── requirements.txt           # Dependencias
+├── importar_alumnos.py       # Script para importación desde Excel
+├── sistema_biblioteca.py     # [LEGACY] Código anterior sin refactorizar
+├── inventario.db             # Base de datos SQLite
+├── README.md
+├── img/                       # Screenshots
+│
+├── database/                  # Capa de Datos
+│   ├── conexion.py           # Conexiones a BD
+│   └── modelos.py            # Esquema de tablas
+│
+├── models/                    # Capa de Lógica (Modelos)
+│   ├── libro.py              # Operaciones con Libros
+│   ├── alumno.py             # Operaciones con Alumnos
+│   └── transaccion.py        # Operaciones con Préstamos
+│
+├── ui/                        # Capa de Presentación
+│   ├── main_window.py        # Ventana principal
+│   ├── tabs/                 # Pestañas
+│   │   ├── prestamos_tab.py
+│   │   ├── libros_tab.py
+│   │   └── alumnos_tab.py
+│   └── dialogs/              # Diálogos emergentes
+│       └── dialogs.py
+│
+└── utils/                     # Utilidades
+    ├── config.py             # Configuración global
+    ├── validators.py         # Validación de datos
+    └── import_excel.py       # Importación desde Excel
+```
+
+## 🏗️ Arquitectura MVC (Model-View-Controller)
+
+La aplicación ha sido refactorizada siguiendo el patrón **MVC**, separando responsabilidades:
+
+- **Models** (`models/`): Contiene la lógica de negocio (CRUD, consultas)
+- **Views** (`ui/`): Interfaz gráfica (ventanas, diálogos, pestañas)
+- **Controller** (`main.py`): Orquestador que conecta modelos con vistas
+- **Database** (`database/`): Capa de persistencia de datos
+
+**Beneficios:**
+✅ Código más mantenible y escalable  
+✅ Fácil agregar nuevas funcionalidades  
+✅ Posibilidad de hacer tests unitarios  
+✅ Separación clara de responsabilidades
+
 ## 🔧 Instalación y Uso
 
 1.  Clona el repositorio:
     ```bash
     git clone https://github.com/fpalaciosg/gestion-biblioteca-app.git
-    ```
-2.  Navega a la carpeta del proyecto:
-    ```bash
     cd gestion-biblioteca-app
     ```
+
+2.  Instala las dependencias:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
 3.  Ejecuta el programa principal:
     ```bash
-    python sistema_biblioteca.py
+    python main.py
     ```
 
 ---
