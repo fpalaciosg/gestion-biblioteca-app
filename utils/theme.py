@@ -1,82 +1,90 @@
 """
-Tema y Paleta de Colores - Define la identidad visual de la aplicación
-Sistema de Colores Moderno y Cohesivo
+Tema y Paleta de Colores - Dark Mode Moderno
 """
 
 class Colors:
-    """Paleta de colores para la aplicación"""
+    """Paleta de colores Dark Mode - Elegante y Profesional"""
     
     # === COLORES PRIMARIOS ===
-    PRIMARY = "#2E7D9A"          # Azul moderno y elegante
-    PRIMARY_LIGHT = "#3B9DC4"    # Variante clara
-    PRIMARY_DARK = "#1E5A75"     # Variante oscura
+    PRIMARY = "#2E7D9A"          # Azul cyan profesional
+    PRIMARY_LIGHT = "#3B9BB8"    # Variante más clara
+    PRIMARY_DARK = "#1F5569"     # Variante más oscura
     
     # === COLORES SECUNDARIOS ===
-    SECONDARY = "#00C9A7"        # Verde/Teal vibrante
-    SECONDARY_LIGHT = "#1FD9B8"  # Variante clara
-    SECONDARY_DARK = "#009B87"   # Variante oscura
+    SECONDARY = "#E8A75D"        # Naranja cálido
+    SECONDARY_LIGHT = "#F5B041"  # Variante clara
+    SECONDARY_DARK = "#D68910"   # Variante oscura
     
     # === COLORES DE ESTADO ===
-    SUCCESS = "#06A77D"          # Verde éxito
-    WARNING = "#F77F00"          # Naranja alerta
-    DANGER = "#D62828"           # Rojo error
-    INFO = "#2E7D9A"             # Azul información
+    SUCCESS = "#2ECC71"          # Verde éxito
+    SUCCESS_LIGHT = "#58D68D"    # Verde más claro
+    WARNING = "#F39C12"          # Naranja advertencia
+    DANGER = "#E74C3C"           # Rojo peligro
+    INFO = "#3498DB"             # Azul información
     
-    # === COLORES DE FONDO ===
+    # === COLORES DE FONDO (DARK MODE) ===
     BG_DARK = "#1E1E2E"          # Fondo principal oscuro
-    BG_SECONDARY = "#2A2A3E"     # Fondo secundario
-    BG_TERTIARY = "#323244"      # Fondo terciario
-    BG_LIGHT = "#44475A"         # Fondo claro (hover)
+    BG_SECONDARY = "#2A2A3E"     # Tarjetas/contenedores
+    BG_TERTIARY = "#363654"      # Fondo de inputs
+    BG_LIGHT = "#424263"         # Hover state
     
-    # === COLORES DE TEXTO ===
-    TEXT_PRIMARY = "#F8F8F2"     # Texto principal blanco
-    TEXT_SECONDARY = "#D5D5D5"   # Texto secundario gris claro
-    TEXT_TERTIARY = "#A8A8A8"    # Texto terciario gris oscuro
-    TEXT_INVERSE = "#1E1E2E"     # Texto inverso (sobre fondos claros)
+    # === COLORES DE TEXTO (DARK MODE) ===
+    TEXT_PRIMARY = "#F8F8F2"     # Texto principal (casi blanco)
+    TEXT_SECONDARY = "#A8A8B8"   # Texto secundario (gris claro)
+    TEXT_TERTIARY = "#6E6E7E"    # Texto terciario (gris medio)
+    TEXT_INVERSE = "#1E1E2E"     # Texto inverso (oscuro sobre claro)
     
     # === BORDES ===
-    BORDER_LIGHT = "#44475A"     # Borde claro
-    BORDER_DARK = "#2A2A3E"      # Borde oscuro
+    BORDER_LIGHT = "#3A3A4E"     # Borde sutil
+    BORDER_DARK = "#4A4A5E"      # Borde medio
     BORDER_ACCENT = "#2E7D9A"    # Borde acentuado
     
     # === ESPECIALES ===
-    ACCENT = "#00D9FF"           # Cyan acentuado
-    OVERLAY = "rgba(0,0,0,0.5)"  # Overlay oscuro
+    ACCENT = "#E8A75D"           # Naranja acento
+    OVERLAY = "rgba(0,0,0,0.3)"  # Overlay oscuro
 
 
 class Styles:
-    """Estilos y constantes de UI"""
+    """Estilos y constantes de UI - Light Mode Educativo"""
     
-    # Bordes redondeados
-    CORNER_RADIUS = 12
-    CORNER_RADIUS_SMALL = 8
-    CORNER_RADIUS_LARGE = 16
+    # Bordes redondeados (según especificación)
+    CORNER_RADIUS = 15           # Para CTkFrame (tarjetas, dashboard)
+    CORNER_RADIUS_SMALL = 8      # Para CTkButton y CTkEntry
+    CORNER_RADIUS_LARGE = 20     # Para contenedores grandes
+    CORNER_RADIUS_BUTTON = 8     # Botones (explícito)
     
     # Padding y spacing
-    PADDING_XS = 4
-    PADDING_SM = 8
-    PADDING_MD = 12
-    PADDING_LG = 16
-    PADDING_XL = 20
+    PADDING_XS = 6
+    PADDING_SM = 10
+    PADDING_MD = 15
+    PADDING_LG = 20
+    PADDING_XL = 25
+    PADDING_XXL = 30
     
-    # Tamaños de fuente
+    # Tamaños de fuente (tipografía limpia)
     FONT_SIZE_SM = 11
-    FONT_SIZE_MD = 13
-    FONT_SIZE_LG = 16
-    FONT_SIZE_XL = 18
-    FONT_SIZE_XXL = 22
+    FONT_SIZE_MD = 12
+    FONT_SIZE_LG = 14
+    FONT_SIZE_XL = 16
+    FONT_SIZE_XXL = 20
     
-    # Fuentes
-    FONT_REGULAR = ("Segoe UI", FONT_SIZE_MD)
-    FONT_BOLD = ("Segoe UI", FONT_SIZE_MD, "bold")
-    FONT_TITLE = ("Segoe UI", FONT_SIZE_XL, "bold")
-    FONT_HEADER = ("Segoe UI", FONT_SIZE_LG, "bold")
-    FONT_MONO = ("Consolas", FONT_SIZE_SM)
+    # Fuentes (Roboto para diseño educativo)
+    FONT_REGULAR = ("Roboto", 12)
+    FONT_BOLD = ("Roboto", 12, "bold")
+    FONT_BUTTON = ("Roboto Medium", 14)
+    FONT_TITLE = ("Roboto", 20, "bold")
+    FONT_HEADER = ("Roboto Medium", 16, "bold")
+    FONT_MONO = ("Consolas", 11)
     
     # Alturas de botones
     BUTTON_HEIGHT_SM = 32
     BUTTON_HEIGHT_MD = 40
     BUTTON_HEIGHT_LG = 48
+    
+    # Anchos de borde
+    BORDER_WIDTH_THIN = 1
+    BORDER_WIDTH_MEDIUM = 2
+    BORDER_WIDTH_THICK = 3
 
 
 class ThemeConfig:

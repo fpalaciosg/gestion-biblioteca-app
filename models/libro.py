@@ -119,3 +119,23 @@ class LibroModel:
             ORDER BY Título
         """
         return self.db.consultar_todos(query)
+    
+    def obtener_estadisticas(self) -> Dict[str, int]:
+        """Obtiene estadísticas generales de libros"""
+        stats = {
+            'total_libros': 0,
+            'total_ejemplares': 0,
+            'disponibles': 0,
+            'prestados': 0
+        }
+        
+        query = "SELECT COUNT(*), SUM(Total_Ejemplares), SUM(Disponibles) FROM Libros"
+        result = self.db.consultar_uno(query)
+        
+        if result:
+            stats['total_libros'] = result[0] or 0
+            stats['total_ejemplares'] = result[1] or 0
+            stats['disponibles'] = result[2] or 0
+            stats['prestados'] = stats['total_ejemplares'] - stats['disponibles']
+        
+        return stats
