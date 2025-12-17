@@ -42,6 +42,7 @@ class LibrosTab:
                                                   height=Styles.BUTTON_HEIGHT_MD,
                                                   corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_bus_l.pack(side="left", fill="x", expand=True, padx=Styles.PADDING_MD)
+        self.entry_bus_l.bind("<Return>", lambda e: self.buscar_libros())
         
         customtkinter.CTkButton(fl, text="🔎 Buscar", width=110, fg_color=Colors.PRIMARY,
                                hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,

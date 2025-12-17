@@ -137,7 +137,7 @@ class MainWindow(customtkinter.CTk):
             cards_container,
             icon="📚",
             value=str(libro_stats['total_libros']),
-            label="Libros",
+            label="Libros Únicos",
             color=Colors.INFO
         ).pack(side="left", fill="both", expand=True, padx=Styles.PADDING_SM)
         
@@ -222,17 +222,74 @@ class MainWindow(customtkinter.CTk):
     
     def refresh_dashboard(self):
         """Actualiza las estadísticas del dashboard"""
-        # Reconstruir dashboard
+        # Destruir dashboard existente
         if hasattr(self, 'dashboard_frame'):
             self.dashboard_frame.destroy()
         
         # Encontrar el main_frame
         main_frame = self.winfo_children()[0]
         
-        # Encontrar la posición después del header
-        children = list(main_frame.winfo_children())
-        header_index = 0
-        
         # Reconstruir dashboard
-        self._build_dashboard(main_frame)
+        dashboard = customtkinter.CTkFrame(main_frame, fg_color=Colors.BG_DARK, 
+                                          corner_radius=0, height=160)
+        # Insertar después del header (posición 1)
+        dashboard.pack(fill="x", padx=0, pady=0, after=main_frame.winfo_children()[0])
+        dashboard.pack_propagate(False)
+        
+        # Contenedor de tarjetas
+        cards_container = customtkinter.CTkFrame(dashboard, fg_color="transparent")
+        cards_container.pack(fill="both", expand=True, padx=Styles.PADDING_XL, pady=Styles.PADDING_LG)
+        
+        # Obtener estadísticas actualizadas
+        libro_stats = self.libro_model.obtener_estadisticas()
+        total_alumnos = self.alumno_model.obtener_total_alumnos()
+        prestamos_activos = self.transaccion_model.obtener_total_prestamos_activos()
+        
+        # Tarjeta 1: Total de Libros
+        self._create_stat_card(
+            cards_container,
+            icon="📚",
+            value=str(libro_stats['total_libros']),
+            label="Libros Únicos",
+            color=Colors.INFO
+        ).pack(side="left", fill="both", expand=True, padx=Styles.PADDING_SM)
+        
+        # Tarjeta 2: Ejemplares Totales
+        self._create_stat_card(
+            cards_container,
+            icon="📖",
+            value=str(libro_stats['total_ejemplares']),
+            label="Total de Libros",
+            color=Colors.SECONDARY
+        ).pack(side="left", fill="both", expand=True, padx=Styles.PADDING_SM)
+        
+        # Tarjeta 3: Disponibles
+        self._create_stat_card(
+            cards_container,
+            icon="✅",
+            value=str(libro_stats['disponibles']),
+            label="Libros Disponibles",
+            color=Colors.SUCCESS
+        ).pack(side="left", fill="both", expand=True, padx=Styles.PADDING_SM)
+        
+        # Tarjeta 4: Prestados
+        self._create_stat_card(
+            cards_container,
+            icon="📤",
+            value=str(libro_stats['prestados']),
+            label="Libros Prestados",
+            color=Colors.WARNING
+        ).pack(side="left", fill="both", expand=True, padx=Styles.PADDING_SM)
+        
+        # Tarjeta 5: Alumnos
+        self._create_stat_card(
+            cards_container,
+            icon="👥",
+            value=str(total_alumnos),
+            label="Cantidad de Alumnos",
+            color=Colors.PRIMARY
+        ).pack(side="left", fill="both", expand=True, padx=Styles.PADDING_SM)
+        
+        # Guardar referencia al dashboard
+        self.dashboard_frame = dashboard
 
