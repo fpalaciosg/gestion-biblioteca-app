@@ -73,7 +73,17 @@ class AlumnoModel:
     def eliminar_alumno(self, id_prestatario: int) -> bool:
         """Elimina un alumno de la BD"""
         query = "DELETE FROM Prestatarios WHERE ID_Prestatario=?"
-        return self.db.ejecutar(query, (id_prestatario,))    
+        return self.db.ejecutar(query, (id_prestatario,))
+    
+    def existe_rut(self, rut: str) -> bool:
+        """Verifica si un RUT ya existe en la base de datos"""
+        rut_limpio = rut.replace(".", "").replace("-", "")
+        query = """
+            SELECT 1 FROM Prestatarios 
+            WHERE REPLACE(REPLACE(RUT, '.', ''), '-', '') = ?
+        """
+        return self.db.consultar_uno(query, (rut_limpio,)) is not None
+    
     def obtener_total_alumnos(self) -> int:
         """Obtiene el total de alumnos registrados"""
         query = "SELECT COUNT(*) FROM Prestatarios"

@@ -2,10 +2,12 @@
 Pestaña de Alumnos - Interfaz para gestionar los alumnos/prestatarios
 """
 import customtkinter
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from models.alumno import AlumnoModel
 from ui.dialogs.dialogs import AlumnoDialog
 from utils.theme import Colors, Styles
+import sqlite3
+import os
 
 
 class AlumnosTab:
@@ -52,6 +54,14 @@ class AlumnosTab:
                                corner_radius=Styles.CORNER_RADIUS_BUTTON,
                                font=Styles.FONT_BOLD,
                                command=self.buscar_alumnos).pack(side="left", padx=Styles.PADDING_SM)
+        
+        customtkinter.CTkButton(fa, text="📥 Importar", fg_color=Colors.SUCCESS,
+                               hover_color=Colors.SUCCESS_LIGHT, text_color=Colors.TEXT_INVERSE,
+                               height=Styles.BUTTON_HEIGHT_MD,
+                               corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD,
+                               command=self.importar_alumnos).pack(side="right", padx=Styles.PADDING_SM)
+        
         customtkinter.CTkButton(fa, text="➕ Nuevo Alumno", fg_color=Colors.SECONDARY,
                                hover_color=Colors.SECONDARY_LIGHT, text_color=Colors.TEXT_INVERSE,
                                height=Styles.BUTTON_HEIGHT_MD,
@@ -217,6 +227,182 @@ class AlumnosTab:
             self.win_detalle = DetalleLibrosWindow(self.parent, id_prestatario, nombre_alumno, self.alumno_model)
         else:
             self.win_detalle.focus()
+    
+    def importar_alumnos(self):
+        """Abre diálogo para importar alumnos desde Excel o SQLite"""
+        file_path = filedialog.askopenfilename(
+            title="Seleccionar archivo de alumnos",
+            filetypes=[
+                ("Todos los archivos soportados", "*.xlsx *.xls *.db *.sqlite *.sqlite3"),
+                ("Excel", "*.xlsx *.xls"),
+                ("SQLite", "*.db *.sqlite *.sqlite3"),
+                ("Todos", "*.*")
+            ]
+        )
+        
+        if not file_path:
+            return
+        
+        ext = os.path.splitext(file_path)[1].lower()
+        
+        try:
+            if ext in ['.xlsx', '.xls']:
+                self._importar_desde_excel(file_path)
+            elif ext in ['.db', '.sqlite', '.sqlite3']:
+                self._importar_desde_sqlite(file_path)
+            else:
+                messagebox.showerror("Error", "Formato de archivo no soportado.\n\nFormatos válidos: .xlsx, .xls, .db, .sqlite, .sqlite3")
+        except Exception as e:
+            messagebox.showerror("Error al importar", f"No se pudo importar el archivo:\n\n{str(e)}")
+    
+    def _importar_desde_excel(self, file_path: str):
+        """Importa alumnos desde un archivo Excel"""
+        try:
+            import pandas as pd
+        except ImportError:
+            messagebox.showerror(
+                "Librería no disponible",
+                "Para importar desde Excel necesitas instalar pandas:\n\npip install pandas openpyxl"
+            )
+            return
+        
+        try:
+            df = pd.read_excel(file_path)
+            
+            # Validar columnas requeridas (case insensitive)
+            columnas = [col.upper() for col in df.columns]
+            requeridas = ['RUT', 'NOMBRE', 'CURSO']
+            
+            faltantes = [col for col in requeridas if col not in columnas]
+            if faltantes:
+                messagebox.showerror(
+                    "Columnas faltantes",
+                    f"El archivo debe contener las columnas:\n\n{', '.join(requeridas)}\n\nFaltantes: {', '.join(faltantes)}"
+                )
+                return
+            
+            # Normalizar nombres de columnas
+            df.columns = [col.upper() for col in df.columns]
+            
+            # Importar datos
+            importados = 0
+            duplicados = 0
+            errores = 0
+            
+            for _, row in df.iterrows():
+                rut = str(row['RUT']).strip()
+                nombre = str(row['NOMBRE']).strip()
+                curso = str(row['CURSO']).strip()
+                
+                if not rut or not nombre or not curso or rut == 'nan' or nombre == 'nan':
+                    errores += 1
+                    continue
+                
+                try:
+                    # Verificar si ya existe
+                    if self.alumno_model.existe_rut(rut):
+                        duplicados += 1
+                        continue
+                    
+                    # Insertar alumno
+                    self.alumno_model.crear_alumno(rut, nombre, curso)
+                    importados += 1
+                except:
+                    errores += 1
+            
+            self.buscar_alumnos()
+            if self.main_window:
+                self.main_window.refresh_dashboard()
+            
+            msg = f"✓ Importación completada\n\n"
+            msg += f"Alumnos importados: {importados}\n"
+            if duplicados > 0:
+                msg += f"Duplicados omitidos: {duplicados}\n"
+            if errores > 0:
+                msg += f"Errores/filas inválidas: {errores}"
+            
+            messagebox.showinfo("Importación exitosa", msg)
+            
+        except Exception as e:
+            raise Exception(f"Error al leer archivo Excel: {str(e)}")
+    
+    def _importar_desde_sqlite(self, file_path: str):
+        """Importa alumnos desde una base de datos SQLite"""
+        conn = None
+        try:
+            conn = sqlite3.connect(file_path)
+            cursor = conn.cursor()
+            
+            # Buscar tabla con columnas requeridas
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tablas = cursor.fetchall()
+            
+            tabla_valida = None
+            for (tabla,) in tablas:
+                cursor.execute(f"PRAGMA table_info({tabla})")
+                columnas = [col[1].upper() for col in cursor.fetchall()]
+                
+                if 'RUT' in columnas and 'NOMBRE' in columnas and 'CURSO' in columnas:
+                    tabla_valida = tabla
+                    break
+            
+            if not tabla_valida:
+                messagebox.showerror(
+                    "Estructura inválida",
+                    "No se encontró ninguna tabla con las columnas requeridas:\n\nRUT, NOMBRE, CURSO"
+                )
+                return
+            
+            # Leer datos
+            cursor.execute(f"SELECT RUT, NOMBRE, CURSO FROM {tabla_valida}")
+            rows = cursor.fetchall()
+            
+            if not rows:
+                messagebox.showwarning("Sin datos", "La tabla no contiene registros.")
+                return
+            
+            # Importar datos
+            importados = 0
+            duplicados = 0
+            errores = 0
+            
+            for row in rows:
+                rut = str(row[0]).strip()
+                nombre = str(row[1]).strip()
+                curso = str(row[2]).strip()
+                
+                if not rut or not nombre or not curso:
+                    errores += 1
+                    continue
+                
+                try:
+                    if self.alumno_model.existe_rut(rut):
+                        duplicados += 1
+                        continue
+                    
+                    self.alumno_model.crear_alumno(rut, nombre, curso)
+                    importados += 1
+                except:
+                    errores += 1
+            
+            self.buscar_alumnos()
+            if self.main_window:
+                self.main_window.refresh_dashboard()
+            
+            msg = f"✓ Importación completada\n\n"
+            msg += f"Alumnos importados: {importados}\n"
+            if duplicados > 0:
+                msg += f"Duplicados omitidos: {duplicados}\n"
+            if errores > 0:
+                msg += f"Errores/filas inválidas: {errores}"
+            
+            messagebox.showinfo("Importación exitosa", msg)
+            
+        except Exception as e:
+            raise Exception(f"Error al leer base de datos SQLite: {str(e)}")
+        finally:
+            if conn:
+                conn.close()
 
 
 class DetalleLibrosWindow(customtkinter.CTkToplevel):
