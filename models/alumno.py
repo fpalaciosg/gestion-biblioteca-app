@@ -73,8 +73,12 @@ class AlumnoModel:
     def eliminar_alumno(self, id_prestatario: int) -> bool:
         """Elimina un alumno de la BD"""
         query = "DELETE FROM Prestatarios WHERE ID_Prestatario=?"
-        return self.db.ejecutar(query, (id_prestatario,))
-    
+        return self.db.ejecutar(query, (id_prestatario,))    
+    def obtener_total_alumnos(self) -> int:
+        """Obtiene el total de alumnos registrados"""
+        query = "SELECT COUNT(*) FROM Prestatarios"
+        result = self.db.consultar_uno(query)
+        return result[0] if result else 0    
     def tiene_prestamos_activos(self, id_prestatario: int) -> bool:
         """Verifica si un alumno tiene préstamos activos"""
         query = "SELECT 1 FROM Transacciones WHERE ID_Prestatario=? AND Estado='Prestado'"

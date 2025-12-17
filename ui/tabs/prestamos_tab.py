@@ -13,11 +13,12 @@ class PrestamosTab:
     """Construye y gestiona la pestaña de Préstamos"""
     
     def __init__(self, parent_tab, libro_model: LibroModel, alumno_model: AlumnoModel, 
-                 transaccion_model: TransaccionModel):
+                 transaccion_model: TransaccionModel, main_window=None):
         self.parent = parent_tab
         self.libro_model = libro_model
         self.alumno_model = alumno_model
         self.transaccion_model = transaccion_model
+        self.main_window = main_window
         self.parent.configure(fg_color=Colors.BG_DARK)
         
         self._build_ui()
@@ -44,8 +45,11 @@ class PrestamosTab:
         self.entry_p_rut = customtkinter.CTkEntry(fp, placeholder_text="Ej: 12345678-9",
                                                   fg_color=Colors.BG_TERTIARY,
                                                   border_color=Colors.BORDER_ACCENT,
+                                                  border_width=Styles.BORDER_WIDTH_MEDIUM,
                                                   text_color=Colors.TEXT_PRIMARY,
-                                                  placeholder_text_color=Colors.TEXT_TERTIARY)
+                                                  placeholder_text_color=Colors.TEXT_TERTIARY,
+                                                  height=Styles.BUTTON_HEIGHT_MD,
+                                                  corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_p_rut.grid(row=2, column=1, sticky="ew", padx=Styles.PADDING_LG, pady=Styles.PADDING_SM)
         
         customtkinter.CTkLabel(fp, text="ISBN/Título:", text_color=Colors.TEXT_PRIMARY,
@@ -53,13 +57,17 @@ class PrestamosTab:
         self.entry_p_isbn = customtkinter.CTkEntry(fp, placeholder_text="Escanee o escriba...",
                                                    fg_color=Colors.BG_TERTIARY,
                                                    border_color=Colors.BORDER_ACCENT,
+                                                   border_width=Styles.BORDER_WIDTH_MEDIUM,
                                                    text_color=Colors.TEXT_PRIMARY,
-                                                   placeholder_text_color=Colors.TEXT_TERTIARY)
+                                                   placeholder_text_color=Colors.TEXT_TERTIARY,
+                                                   height=Styles.BUTTON_HEIGHT_MD,
+                                                   corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_p_isbn.grid(row=3, column=1, sticky="ew", padx=Styles.PADDING_LG, pady=Styles.PADDING_SM)
         
         customtkinter.CTkButton(fp, text="✓ CONFIRMAR PRÉSTAMO", fg_color=Colors.SECONDARY,
                                hover_color=Colors.SECONDARY_LIGHT, text_color=Colors.TEXT_INVERSE,
-                               height=Styles.BUTTON_HEIGHT_LG, corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               height=Styles.BUTTON_HEIGHT_LG, corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD, border_width=0,
                                command=self.realizar_prestamo).grid(row=4, columnspan=2, pady=Styles.PADDING_XL, 
                                                                     padx=Styles.PADDING_LG, sticky="ew")
         
@@ -81,13 +89,17 @@ class PrestamosTab:
         self.entry_d_isbn = customtkinter.CTkEntry(fd, placeholder_text="Libro a devolver...",
                                                    fg_color=Colors.BG_TERTIARY,
                                                    border_color=Colors.BORDER_ACCENT,
+                                                   border_width=Styles.BORDER_WIDTH_MEDIUM,
                                                    text_color=Colors.TEXT_PRIMARY,
-                                                   placeholder_text_color=Colors.TEXT_TERTIARY)
+                                                   placeholder_text_color=Colors.TEXT_TERTIARY,
+                                                   height=Styles.BUTTON_HEIGHT_MD,
+                                                   corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_d_isbn.grid(row=2, column=1, sticky="ew", padx=Styles.PADDING_LG, pady=Styles.PADDING_SM)
         
         customtkinter.CTkButton(fd, text="✓ CONFIRMAR DEVOLUCIÓN", fg_color=Colors.PRIMARY,
                                hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,
-                               height=Styles.BUTTON_HEIGHT_LG, corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               height=Styles.BUTTON_HEIGHT_LG, corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD, border_width=0,
                                command=self.realizar_devolucion).grid(row=4, columnspan=2, pady=Styles.PADDING_XL, 
                                                                       padx=Styles.PADDING_LG, sticky="ew")
     
@@ -126,6 +138,10 @@ class PrestamosTab:
             self.entry_p_rut.delete(0, "end")
             self.entry_p_isbn.delete(0, "end")
             
+            # Actualizar dashboard
+            if self.main_window:
+                self.main_window.refresh_dashboard()
+            
         except Exception as e:
             messagebox.showerror("Error", str(e))
     
@@ -157,6 +173,10 @@ class PrestamosTab:
             
             messagebox.showinfo("Éxito", f"Devuelto: {ltit}")
             self.entry_d_isbn.delete(0, "end")
+            
+            # Actualizar dashboard
+            if self.main_window:
+                self.main_window.refresh_dashboard()
             
         except Exception as e:
             messagebox.showerror("Error", str(e))

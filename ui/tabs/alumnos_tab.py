@@ -11,9 +11,10 @@ from utils.theme import Colors, Styles
 class AlumnosTab:
     """Construye y gestiona la pestaña de Alumnos"""
     
-    def __init__(self, parent_tab, alumno_model: AlumnoModel):
+    def __init__(self, parent_tab, alumno_model: AlumnoModel, main_window=None):
         self.parent = parent_tab
         self.alumno_model = alumno_model
+        self.main_window = main_window
         self.win_e_alumno = None
         self.win_n_alumno = None
         self.win_detalle = None
@@ -27,26 +28,35 @@ class AlumnosTab:
         """Construye la interfaz de la pestaña"""
         # --- BARRA DE BÚSQUEDA ---
         fa = customtkinter.CTkFrame(self.parent, fg_color=Colors.BG_SECONDARY,
-                                   corner_radius=Styles.CORNER_RADIUS_SMALL)
+                                   corner_radius=Styles.CORNER_RADIUS_LARGE,
+                                   border_width=Styles.BORDER_WIDTH_THIN,
+                                   border_color=Colors.BORDER_LIGHT)
         fa.pack(fill="x", padx=Styles.PADDING_LG, pady=Styles.PADDING_LG)
         
         customtkinter.CTkLabel(fa, text="🔍 Buscar:", text_color=Colors.TEXT_PRIMARY,
-                              font=Styles.FONT_REGULAR).pack(side="left", padx=Styles.PADDING_MD)
+                              font=Styles.FONT_BOLD).pack(side="left", padx=Styles.PADDING_LG)
         self.entry_bus_a = customtkinter.CTkEntry(fa, placeholder_text="Buscar por nombre, apellidos o RUT...",
                                                   fg_color=Colors.BG_TERTIARY,
                                                   border_color=Colors.BORDER_ACCENT,
+                                                  border_width=Styles.BORDER_WIDTH_MEDIUM,
                                                   text_color=Colors.TEXT_PRIMARY,
-                                                  placeholder_text_color=Colors.TEXT_TERTIARY)
+                                                  placeholder_text_color=Colors.TEXT_TERTIARY,
+                                                  height=Styles.BUTTON_HEIGHT_MD,
+                                                  corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_bus_a.pack(side="left", fill="x", expand=True, padx=Styles.PADDING_MD)
         
-        customtkinter.CTkButton(fa, text="🔎 Buscar", width=100, fg_color=Colors.INFO,
+        customtkinter.CTkButton(fa, text="🔎 Buscar", width=110, fg_color=Colors.INFO,
                                hover_color="#4291B5", text_color=Colors.TEXT_INVERSE,
-                               corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               height=Styles.BUTTON_HEIGHT_MD,
+                               corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD,
                                command=self.buscar_alumnos).pack(side="left", padx=Styles.PADDING_SM)
         customtkinter.CTkButton(fa, text="➕ Nuevo Alumno", fg_color=Colors.SECONDARY,
                                hover_color=Colors.SECONDARY_LIGHT, text_color=Colors.TEXT_INVERSE,
-                               corner_radius=Styles.CORNER_RADIUS_SMALL,
-                               command=self.abrir_nuevo_alumno).pack(side="right", padx=Styles.PADDING_MD)
+                               height=Styles.BUTTON_HEIGHT_MD,
+                               corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD,
+                               command=self.abrir_nuevo_alumno).pack(side="right", padx=Styles.PADDING_LG)
         
         # --- CABECERA ---
         ha = customtkinter.CTkFrame(self.parent, height=40, fg_color=Colors.INFO,
@@ -121,7 +131,9 @@ class AlumnosTab:
                 fg_color=col_btn,
                 hover_color="#D9A820" if act > 0 else Colors.TEXT_TERTIARY,
                 text_color=Colors.TEXT_INVERSE,
-                corner_radius=Styles.CORNER_RADIUS_SMALL,
+                corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                height=32,
+                font=("Segoe UI", 11, "bold"),
                 command=lambda p=pid, n=nom: self.ver_libros_alumno(p, n)
             ).grid(row=idx, column=3, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="ew")
 
@@ -133,13 +145,15 @@ class AlumnosTab:
             customtkinter.CTkButton(
                 acciones,
                 text="✏️ Editar",
-                width=80,
+                width=90,
                 fg_color=Colors.INFO,
                 hover_color="#4291B5",
                 text_color=Colors.TEXT_INVERSE,
-                corner_radius=Styles.CORNER_RADIUS_SMALL,
+                corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                height=32,
+                font=("Segoe UI", 11, "bold"),
                 command=lambda p=pid, d=datos_edit: self.abrir_editar_alumno(p, d)
-            ).pack(side="left", padx=Styles.PADDING_SM)
+            ).pack(side="left", padx=Styles.PADDING_XS)
             customtkinter.CTkButton(
                 acciones,
                 text="🗑️",
@@ -147,9 +161,10 @@ class AlumnosTab:
                 fg_color=Colors.DANGER,
                 hover_color="#B02020",
                 text_color=Colors.TEXT_INVERSE,
-                corner_radius=Styles.CORNER_RADIUS_SMALL,
+                corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                height=32,
                 command=lambda p=pid, n=nom: self.eliminar_alumno(p, n)
-            ).pack(side="left", padx=Styles.PADDING_SM)
+            ).pack(side="left", padx=Styles.PADDING_XS)
     
     def abrir_nuevo_alumno(self):
         """Abre el diálogo para crear un nuevo alumno"""
@@ -188,6 +203,10 @@ class AlumnosTab:
             if messagebox.askyesno("🗑️ Borrar", f"¿Eliminar a {nombre}?"):
                 self.alumno_model.eliminar_alumno(id_prestatario)
                 self.buscar_alumnos()
+                
+                # Actualizar dashboard
+                if self.main_window:
+                    self.main_window.refresh_dashboard()
         except Exception as e:
             messagebox.showerror("❌ Error", str(e))
     

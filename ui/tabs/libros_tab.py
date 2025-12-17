@@ -11,9 +11,10 @@ from utils.theme import Colors, Styles
 class LibrosTab:
     """Construye y gestiona la pestaña de Libros"""
     
-    def __init__(self, parent_tab, libro_model: LibroModel):
+    def __init__(self, parent_tab, libro_model: LibroModel, main_window=None):
         self.parent = parent_tab
         self.libro_model = libro_model
+        self.main_window = main_window
         self.win_e_libro = None
         self.win_n_libro = None
         self.parent.configure(fg_color=Colors.BG_DARK)
@@ -25,26 +26,35 @@ class LibrosTab:
         """Construye la interfaz de la pestaña"""
         # --- BARRA DE BÚSQUEDA ---
         fl = customtkinter.CTkFrame(self.parent, fg_color=Colors.BG_SECONDARY,
-                                   corner_radius=Styles.CORNER_RADIUS_SMALL)
+                                   corner_radius=Styles.CORNER_RADIUS_LARGE,
+                                   border_width=Styles.BORDER_WIDTH_THIN,
+                                   border_color=Colors.BORDER_LIGHT)
         fl.pack(fill="x", padx=Styles.PADDING_LG, pady=Styles.PADDING_LG)
         
         customtkinter.CTkLabel(fl, text="🔍 Buscar:", text_color=Colors.TEXT_PRIMARY,
-                              font=Styles.FONT_REGULAR).pack(side="left", padx=Styles.PADDING_MD)
+                              font=Styles.FONT_BOLD).pack(side="left", padx=Styles.PADDING_LG)
         self.entry_bus_l = customtkinter.CTkEntry(fl, placeholder_text="Nombre del libro...",
                                                   fg_color=Colors.BG_TERTIARY,
                                                   border_color=Colors.BORDER_ACCENT,
+                                                  border_width=Styles.BORDER_WIDTH_MEDIUM,
                                                   text_color=Colors.TEXT_PRIMARY,
-                                                  placeholder_text_color=Colors.TEXT_TERTIARY)
+                                                  placeholder_text_color=Colors.TEXT_TERTIARY,
+                                                  height=Styles.BUTTON_HEIGHT_MD,
+                                                  corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_bus_l.pack(side="left", fill="x", expand=True, padx=Styles.PADDING_MD)
         
-        customtkinter.CTkButton(fl, text="🔎 Buscar", width=100, fg_color=Colors.PRIMARY,
+        customtkinter.CTkButton(fl, text="🔎 Buscar", width=110, fg_color=Colors.PRIMARY,
                                hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,
-                               corner_radius=Styles.CORNER_RADIUS_SMALL,
+                               height=Styles.BUTTON_HEIGHT_MD,
+                               corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD,
                                command=self.buscar_libros).pack(side="left", padx=Styles.PADDING_SM)
         customtkinter.CTkButton(fl, text="➕ Nuevo / Stock", fg_color=Colors.SECONDARY,
                                hover_color=Colors.SECONDARY_LIGHT, text_color=Colors.TEXT_INVERSE,
-                               corner_radius=Styles.CORNER_RADIUS_SMALL,
-                               command=self.abrir_nuevo_libro).pack(side="right", padx=Styles.PADDING_MD)
+                               height=Styles.BUTTON_HEIGHT_MD,
+                               corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                               font=Styles.FONT_BOLD,
+                               command=self.abrir_nuevo_libro).pack(side="right", padx=Styles.PADDING_LG)
         
         # --- CABECERA ---
         hl = customtkinter.CTkFrame(self.parent, height=40, fg_color=Colors.PRIMARY,
@@ -121,14 +131,16 @@ class LibrosTab:
             frame_acciones.grid(row=idx, column=4, padx=Styles.PADDING_MD, pady=Styles.PADDING_SM, sticky="e")
             
             datos_para_editar = (isbn, tit, aut, edit, anio, cat)
-            customtkinter.CTkButton(frame_acciones, text="✏️ Editar", width=80, fg_color=Colors.PRIMARY,
+            customtkinter.CTkButton(frame_acciones, text="✏️ Editar", width=90, fg_color=Colors.PRIMARY,
                                    hover_color=Colors.PRIMARY_LIGHT, text_color=Colors.TEXT_INVERSE,
-                                   corner_radius=Styles.CORNER_RADIUS_SMALL,
-                                   command=lambda i=lid, d=datos_para_editar: self.abrir_editar_libro(i, d)).pack(side="left", padx=Styles.PADDING_SM)
+                                   corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                                   height=32, font=("Segoe UI", 11, "bold"),
+                                   command=lambda i=lid, d=datos_para_editar: self.abrir_editar_libro(i, d)).pack(side="left", padx=Styles.PADDING_XS)
             customtkinter.CTkButton(frame_acciones, text="🗑️", width=40, fg_color=Colors.DANGER,
                                    hover_color="#B02020", text_color=Colors.TEXT_INVERSE,
-                                   corner_radius=Styles.CORNER_RADIUS_SMALL,
-                                   command=lambda i=lid, t=tit: self.eliminar_libro(i, t)).pack(side="left", padx=Styles.PADDING_SM)
+                                   corner_radius=Styles.CORNER_RADIUS_BUTTON,
+                                   height=32,
+                                   command=lambda i=lid, t=tit: self.eliminar_libro(i, t)).pack(side="left", padx=Styles.PADDING_XS)
     
     def abrir_nuevo_libro(self):
         """Abre el diálogo para crear un nuevo libro"""
@@ -180,6 +192,11 @@ class LibrosTab:
                     messagebox.showinfo("Ok", "Libro creado.")
             
             self.buscar_libros()
+            
+            # Actualizar dashboard
+            if self.main_window:
+                self.main_window.refresh_dashboard()
+            
             return True
         except Exception as e:
             messagebox.showerror("Error", str(e))
@@ -191,8 +208,12 @@ class LibrosTab:
             if self.libro_model.tiene_prestamos_activos(id_libro):
                 return messagebox.showerror("Error", f"'{titulo}' tiene préstamos activos.")
             
-            if messagebox.askyesno("Borrar", f"¿Eliminar '{titulo}'?"):
+            if messagebox.askyesno("🗑️ Borrar", f"¿Eliminar '{titulo}'?"):
                 self.libro_model.eliminar_libro(id_libro)
                 self.buscar_libros()
+                
+                # Actualizar dashboard
+                if self.main_window:
+                    self.main_window.refresh_dashboard()
         except Exception as e:
             messagebox.showerror("Error", str(e))

@@ -84,3 +84,9 @@ class TransaccionModel:
             WHERE ID_Libro = ? AND Estado = 'Prestado'
         """
         return self.db.consultar_uno(query, (id_libro,))
+    
+    def obtener_total_prestamos_activos(self) -> int:
+        """Obtiene el total de préstamos activos (no devueltos)"""
+        query = "SELECT COUNT(*) FROM Transacciones WHERE Estado = 'Prestado'"
+        result = self.db.consultar_uno(query)
+        return result[0] if result else 0
