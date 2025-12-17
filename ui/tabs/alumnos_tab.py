@@ -44,6 +44,7 @@ class AlumnosTab:
                                                   height=Styles.BUTTON_HEIGHT_MD,
                                                   corner_radius=Styles.CORNER_RADIUS_BUTTON)
         self.entry_bus_a.pack(side="left", fill="x", expand=True, padx=Styles.PADDING_MD)
+        self.entry_bus_a.bind("<Return>", lambda e: self.buscar_alumnos())
         
         customtkinter.CTkButton(fa, text="🔎 Buscar", width=110, fg_color=Colors.INFO,
                                hover_color="#4291B5", text_color=Colors.TEXT_INVERSE,
